@@ -1,5 +1,8 @@
 
 import { NativeModules } from 'react-native';
-
-export default NativeModules.RNRnpdfaddpassword
+let {RNRnpdfaddpassword,RNHTMLtoPDF} = NativeModules
+export default {
+    RNRnpdfaddpassword,
+    RNHTMLtoPDF
+}
 
