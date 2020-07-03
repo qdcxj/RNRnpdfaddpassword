@@ -14,7 +14,7 @@
 }    
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(convert:(NSDictionary *)options resolver:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(convert:(NSDictionary *)options, resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
 
       NSString *fileName = [RCTConvert NSString:options[@"fileName"]];
