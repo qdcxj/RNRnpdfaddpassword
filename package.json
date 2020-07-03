@@ -1,0 +1,19 @@
+
+{
+  "name": "react-native-rnpdfaddpassword",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native"
+  ],
+  "homepage": "https://github.com/christopherdro/react-native-html-to-pdf",
+  "author": "",
+  "license": "",
+  "peerDependencies": {
+    "react-native": "^0.41.2"
+  }
+}
