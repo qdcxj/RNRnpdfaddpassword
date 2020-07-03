@@ -85,137 +85,44 @@ RCT_EXPORT_METHOD(convert:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
 
-    if (options[@"html"]){
-        _html = [RCTConvert NSString:options[@"html"]];
+   NSString *fileName = [RCTConvert NSString:options[@"fileName"]];
+      NSString *password = [RCTConvert NSString:options[@"password"]];
+      NSString *cacheDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
+      NSLog(@'%@',*cacheDir);
+      NSString *pdfPathOutput = [cacheDir stringByAppendingPathComponent:[fileName stringByAppendingString:@"_protected.pdf"] ];
+      NSLog(@'%@',*pdfPathOutput);
+      CFURLRef pdfURLOutput =(__bridge_retained CFURLRef) [[NSURL alloc] initFileURLWithPath:(NSString *)pdfPathOutput];
+      CFMutableDictionaryRef myDictionary = NULL;
+      myDictionary = CFDictionaryCreateMutable(NULL, 0,
+                                 &kCFTypeDictionaryKeyCallBacks,
+                                 &kCFTypeDictionaryValueCallBacks); // 4
+    //CFDictionarySetValue(myDictionary, kCGPDFContextTitle, CFSTR("My PDF File"));
+    //CFDictionarySetValue(myDictionary, kCGPDFContextCreator, CFSTR("My Name"));
+      CFDictionarySetValue(myDictionary, kCGPDFContextUserPassword,  (__bridge CFStringRef)password);
+      CFDictionarySetValue(myDictionary, kCGPDFContextOwnerPassword,  (__bridge CFStringRef)password);
+
+    // Create the output context
+    CGContextRef writeContext = CGPDFContextCreateWithURL(pdfURLOutput, NULL, myDictionary);
+    NSString *pdfPathInput = [cacheDir stringByAppendingPathComponent:@"proposal.pdf"];
+    [self drawPDFToContext:pdfPathInput withContext:writeContext];
+
+    CGPDFContextClose(writeContext);
+    CFRelease(pdfURLOutput);
+    CGContextRelease(writeContext);
+}      
+
+- (void)drawPDFToContext:(NSString*)path withContext:(CGContextRef)context {
+    CFURLRef pdfURL = (__bridge_retained CFURLRef)[[NSURL alloc] initFileURLWithPath:(NSString *)path];
+    CGPDFDocumentRef pdfRef = CGPDFDocumentCreateWithURL((CFURLRef) pdfURL);
+    NSInteger numberOfPages = CGPDFDocumentGetNumberOfPages(pdfRef);
+    for (int i=1; i<=numberOfPages; i++) {
+        CGPDFPageRef page = CGPDFDocumentGetPage(pdfRef, i);
+        CGRect mediaBox = CGPDFPageGetBoxRect(page, kCGPDFMediaBox);
+        CGContextBeginPage(context, &mediaBox);
+        CGContextDrawPDFPage(context, page);
+        CGContextEndPage(context);
     }
-
-    if (options[@"fileName"]){
-        _fileName = [RCTConvert NSString:options[@"fileName"]];
-    } else {
-        _fileName = [[NSProcessInfo processInfo] globallyUniqueString];
-    }
-
-    // Default Color
-    _bgColor = [UIColor colorWithRed: (246.0/255.0) green:(245.0/255.0) blue:(240.0/255.0) alpha:1];
-    if (options[@"bgColor"]){
-        NSString *hex = [RCTConvert NSString:options[@"bgColor"]];
-        hex = [hex uppercaseString];
-        NSString *cString = [hex stringByTrimmingCharactersInSet:
-            [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-
-        if ((cString.length) == 7) {
-            NSScanner *scanner = [NSScanner scannerWithString:cString];
-
-            UInt32 rgbValue = 0;
-            [scanner setScanLocation:1]; // Bypass '#' character
-            [scanner scanHexInt:&rgbValue];
-
-            _bgColor = [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
-                                       green:((float)((rgbValue & 0x00FF00) >>  8))/255.0 \
-                                        blue:((float)((rgbValue & 0x0000FF) >>  0))/255.0 \
-                                       alpha:1.0];
-        }
-    }
-
-    if (options[@"directory"] && [options[@"directory"] isEqualToString:@"Documents"]){
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsPath = [paths objectAtIndex:0];
-
-        _filePath = [NSString stringWithFormat:@"%@/%@.pdf", documentsPath, _fileName];
-    } else {
-        _filePath = [NSString stringWithFormat:@"%@%@.pdf", NSTemporaryDirectory(), _fileName];
-    }
-
-    if (options[@"base64"] && [options[@"base64"] boolValue]) {
-        _base64 = true;
-    } else {
-        _base64 = false;
-    }
-
-    if (options[@"height"] && options[@"width"]) {
-        float width = [RCTConvert float:options[@"width"]];
-        float height = [RCTConvert float:options[@"height"]];
-        _PDFSize = CGSizeMake(width, height);
-    } else {
-        _PDFSize = PDFSize;
-    }
-
-    if (options[@"paddingBottom"]) {
-        _paddingBottom = [RCTConvert float:options[@"paddingBottom"]];
-    } else {
-        _paddingBottom = 10.0f;
-    }
-
-    if (options[@"paddingLeft"]) {
-        _paddingLeft = [RCTConvert float:options[@"paddingLeft"]];
-    } else {
-        _paddingLeft = 10.0f;
-    }
-
-    if (options[@"paddingTop"]) {
-        _paddingTop = [RCTConvert float:options[@"paddingTop"]];
-    } else {
-        _paddingTop = 10.0f;
-    }
-
-    if (options[@"paddingRight"]) {
-        _paddingRight = [RCTConvert float:options[@"paddingRight"]];
-    } else {
-        _paddingRight = 10.0f;
-    }
-
-    if (options[@"padding"]) {
-        _paddingTop = [RCTConvert float:options[@"padding"]];
-        _paddingBottom = [RCTConvert float:options[@"padding"]];
-        _paddingLeft = [RCTConvert float:options[@"padding"]];
-        _paddingRight = [RCTConvert float:options[@"padding"]];
-    }
-
-    NSString *path = [[NSBundle mainBundle] bundlePath];
-    NSURL *baseURL = [NSURL fileURLWithPath:path];
-
-    [_webView loadHTMLString:_html baseURL:baseURL];
-
-    _resolveBlock = resolve;
-    _rejectBlock = reject;
-
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)awebView
-{
-    if (awebView.isLoading)
-        return;
-
-    UIPrintPageRenderer *render = [[UIPrintPageRenderer alloc] init];
-    [render addPrintFormatter:awebView.viewPrintFormatter startingAtPageAtIndex:0];
-
-    // Define the printableRect and paperRect
-    // If the printableRect defines the printable area of the page
-    CGRect paperRect = CGRectMake(0, 0, _PDFSize.width, _PDFSize.height);
-    CGRect printableRect = CGRectMake(_paddingTop, _paddingLeft, _PDFSize.width-(_paddingLeft + _paddingRight), _PDFSize.height-(_paddingBottom + _paddingTop));
-
-
-    [render setValue:[NSValue valueWithCGRect:paperRect] forKey:@"paperRect"];
-    [render setValue:[NSValue valueWithCGRect:printableRect] forKey:@"printableRect"];
-
-    NSData * pdfData = [render printToPDF:&_numberOfPages backgroundColor:_bgColor ];
-
-    if (pdfData) {
-        NSString *pdfBase64 = @"";
-
-        [pdfData writeToFile:_filePath atomically:YES];
-        if (_base64) {
-            pdfBase64 = [pdfData base64EncodedStringWithOptions:0];
-        }
-        NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
-                             pdfBase64, @"base64",
-                             [NSString stringWithFormat: @"%ld", (long)_numberOfPages], @"numberOfPages",
-                             _filePath, @"filePath", nil];
-        _resolveBlock(data);
-    } else {
-        NSError *error;
-        _rejectBlock(RCTErrorUnspecified, nil, RCTErrorWithMessage(error.description));
-    }
-}
-
+    CFRelease(pdfURL);
+    CGPDFDocumentRelease(pdfRef);
+}                              
 @end
