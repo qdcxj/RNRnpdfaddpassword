@@ -10,8 +10,8 @@
   "keywords": [
     "react-native"
   ],
-  "homepage": "https://github.com/christopherdro/react-native-html-to-pdf",
-  "author": "",
+  "homepage": "https://github.com/qdcxj/RNRnpdfaddpassword.git",
+  "author": "cxj",
   "license": "",
   "peerDependencies": {
     "react-native": "^0.41.2"
