@@ -26,9 +26,10 @@
     BOOL autoHeight;
 }
 RCT_EXPORT_MODULE();
-RCT_EXPORT_METHOD(doSomething:(NSString *)aString withA:(NSString *)a)
+RCT_EXPORT_METHOD(testCallback:(RCTResponseSenderBlock)callback)
 {
-  NSLog(@"%@,%@",aString,a);
+    NSArray *items = @[@"callback ", @"test ", @"array"];
+    callback(@events);
 }
 @end
   
