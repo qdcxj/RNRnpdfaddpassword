@@ -1,7 +1,7 @@
 
 import { NativeModules } from 'react-native';
-let {RNHTMLtoPDF} = NativeModules
+let {RNHTMLtoPDF,RNMyLibrary} = NativeModules
 export default {
-    RNHTMLtoPDF
+    RNHTMLtoPDF,RNMyLibrary
 }
 
