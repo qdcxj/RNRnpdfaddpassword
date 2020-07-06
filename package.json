@@ -1,7 +1,7 @@
 
 {
   "name": "react-native-rnpdfaddpassword",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,9 +10,6 @@
   "keywords": [
     "react-native"
   ],
-  "author": "",
-  "license": "",
-  "peerDependencies": {
-    "react-native": "^0.41.2"
-  }
+  "author": "cxj",
+  "license": "MIT"
 }
