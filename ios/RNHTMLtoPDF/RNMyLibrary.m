@@ -1,6 +1,12 @@
 
 #import "RNMyLibrary.h"
-
+#import <CoreGraphics/CoreGraphics.h>
+#import <UIKit/UIKit.h>
+#import <React/RCTConvert.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTView.h>
+#import <React/UIView+React.h>
+#import <React/RCTUtils.h>
 @implementation RNMyLibrary
 
 - (dispatch_queue_t)methodQueue
