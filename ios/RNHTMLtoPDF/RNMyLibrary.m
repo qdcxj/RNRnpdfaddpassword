@@ -13,10 +13,10 @@
 {
     return dispatch_get_main_queue();
 }
-RCT_EXPORT_MODULE()
-RCT_EXPORT_METHOD(processString:(NSString *)input callback:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_MODULE();
+RCT_EXPORT_METHOD(doSomething:(NSString *)aString withA:(NSString *)a)
 {
-  callback(@[[input stringByReplacingOccurrencesOfString:@"Goodbye" withString:@"Hello"]]);
+  NSLog(@"%@,%@",aString,a);
 }
 @end
   
