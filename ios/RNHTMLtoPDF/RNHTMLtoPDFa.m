@@ -8,7 +8,7 @@
 #import <React/RCTView.h>
 #import <React/UIView+React.h>
 #import <React/RCTUtils.h>
-#import "RNHTMLtoPDF.h"
+#import "RNHTMLtoPDFa.h"
 
 #define PDFSize CGSizeMake(612,792)
 
