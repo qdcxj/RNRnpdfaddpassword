@@ -1,6 +1,9 @@
 
 import { NativeModules } from 'react-native';
 
-const { RNRnpdfaddpassword } = NativeModules;
+const { RNRnpdfaddpassword,RNMyLibrary } = NativeModules;
 
-export default RNRnpdfaddpassword;
+export default {
+    RNRnpdfaddpassword,
+    RNMyLibrary
+};
