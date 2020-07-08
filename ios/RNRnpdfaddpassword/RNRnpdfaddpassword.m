@@ -8,12 +8,10 @@
     return dispatch_get_main_queue();
 }
 RCT_EXPORT_MODULE();
-RCT_EXPORT_METHOD(doSomething:(NSString *)aString)
+RCT_EXPORT_METHOD(doSomething:(NSArray*)arguments)
 {
-    // NSString *fileName = [arguments objectAtIndex:0];
-    // NSString *password = [arguments objectAtIndex:1];
-    NSString *fileName = @"qwersda";
-    NSString *password = @"sdhasd";
+    NSString *fileName = [arguments objectAtIndex:0];
+    NSString *password = [arguments objectAtIndex:1];
     NSString *cacheDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
     NSString *pdfPathOutput = [cacheDir stringByAppendingPathComponent:[fileName stringByAppendingString:@"_protected.pdf"] ];
     CFURLRef pdfURLOutput =(__bridge_retained CFURLRef) [[NSURL alloc] initFileURLWithPath:(NSString *)pdfPathOutput];
